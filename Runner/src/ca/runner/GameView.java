@@ -21,26 +21,22 @@ public class GameView extends SurfaceView {
 	Bitmap playerbmp;
 	private List<Player> player = new ArrayList<Player>();
 
-
-
 	public GameView(Context context) {
 		super(context);
 
 		gameLoop = new GameLoop(this);
 
 		holder = getHolder();
-		holder.addCallback(new Callback() { // CTRL + Space tar farm allt
+		holder.addCallback(new Callback() {
 
 			public void surfaceDestroyed(SurfaceHolder arg0) {
 				// TODO Auto-generated method stub
-
 			}
 
 			public void surfaceCreated(SurfaceHolder arg0) {
 				// TODO Auto-generated method stub
 				gameLoop.setRunning(true);
 				gameLoop.start();
-
 
 			}
 
