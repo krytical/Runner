@@ -4,50 +4,57 @@ import android.graphics.Canvas;
 
 public class GameLoop extends Thread{
 	private GameView view;
-	static final long FPS = 60;
-	boolean running;
+	private final static int 	MAX_FPS = 60;
+	private final static int	MAX_FRAME_SKIPS = 5;
+	private final static int	FRAME_PERIOD = 1000 / MAX_FPS;
+
+	boolean runner = false;
 
 	public GameLoop(GameView view){
 		this.view = view;
 	}
 
-	public void setRunning(boolean run){
-		running = true;
+	public void setRunner(){
+		runner = true;
 	}
-
 	@Override
-	public void run(){
-		long ticksPS = 1000/FPS;
-		long startTime = 0;
-		long sleepTime;
-		while (running){
-			Canvas c = null;
+	public void run() {
+		Canvas canvas;
+		long beginTime;	
+		long timeDiff;		
+		int sleepTime;		
+		int framesSkipped;	
+
+		sleepTime = 0;
+
+		while (runner) {
+			canvas = null;
 			try {
+				canvas = view.holder.lockCanvas();
+				synchronized (view.holder) {
+					beginTime = System.currentTimeMillis();
+					framesSkipped = 0;
+					this.view.onDraw(canvas);
+					timeDiff = System.currentTimeMillis() - beginTime;
+					sleepTime = (int)(FRAME_PERIOD - timeDiff);
 
-				c = view.getHolder().lockCanvas();
-				synchronized(view.getHolder())
-				{
-					view.onDraw(c);
+					if (sleepTime > 0) {
+						try {
+							Thread.sleep(sleepTime);
+						} catch (InterruptedException e) {}
+					}
+
+					while (sleepTime < 0 && framesSkipped < MAX_FRAME_SKIPS) {
+						this.view.update();
+						sleepTime += FRAME_PERIOD;
+						framesSkipped++;
+					}
 				}
-
 			} finally {
-				if (c != null)
-				{
-					view.getHolder().unlockCanvasAndPost(c);
-				}}
-			sleepTime = ticksPS-(System.currentTimeMillis() - startTime);
-			try	{
-				if (sleepTime > 0)
-				{
-					sleep(sleepTime);
+				if (canvas != null) {
+					view.holder.unlockCanvasAndPost(canvas);
 				}
-				else{
-					sleep(10);
-				}}
-			catch (Exception e){}
+			}
 		}
-
 	}
-
 }
-
