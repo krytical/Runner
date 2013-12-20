@@ -11,7 +11,7 @@ public class Player {
 	static int vspeed = 1;
 	static int playerheight;
 	static int playerwidth;
-	static int jumppower = -10;
+	static int jumppower = -13;
 
 	private int width,height;
 

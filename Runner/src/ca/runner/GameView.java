@@ -19,12 +19,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 
-@SuppressLint("WrongCall")
 public class GameView extends SurfaceView {
 	GameLoop gameLoop;
 	SurfaceHolder holder;
 
-	public static int globalxSpeed = 8;
+	public static int globalxSpeed = 5;
 
 	Bitmap playerbmp;
 	Bitmap coinbmp;
@@ -64,7 +63,7 @@ public class GameView extends SurfaceView {
 
 	private String saveAchievement10000 = "Achievement10000";
 	private String saveScore = "Highscore";
-	private String Menu = "Running";
+	private String Menu = "Runner";
 
 	public GameView(Context context) {
 		super(context);
@@ -129,7 +128,7 @@ public class GameView extends SurfaceView {
 				if (buttons.get(i).getState() == 1){   // Restart
 					if ((buttons.get(i).getX()<e.getX() && buttons.get(i).getX()+84>e.getX())){
 						if (buttons.get(i).getY()<e.getY() && buttons.get(i).getY()+32>e.getY()){
-							Menu = "Running";
+							Menu = "Runner";
 							startGame();}	
 					}
 				}
@@ -164,7 +163,7 @@ public class GameView extends SurfaceView {
 		timerCoins ++;
 		timerSpikes ++;
 		timerShield ++;
-		if (Menu =="Running"){
+		if (Menu =="Runner"){
 			if (PlayerGotShield){
 				PlayerShieldTimer --;
 				if (PlayerShieldTimer <= 0)
@@ -328,7 +327,7 @@ public class GameView extends SurfaceView {
 			textpaint.setTextSize(32);
 			canvas.drawText("Score: "+String.valueOf(Score), 0, 32, textpaint);
 			canvas.drawText("High Score: "+String.valueOf(HighScore), 0, 64, textpaint);
-			canvas.drawText("Coins"+String.valueOf(Coinscollected), 0, 96, textpaint);
+			canvas.drawText("Coins: "+String.valueOf(Coinscollected), 0, 96, textpaint);
 			if (Achievement10000 == 0)
 			{
 				canvas.drawText("10000 Points - Not Complete", 0, 128, textpaint);

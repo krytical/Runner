@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 @SuppressLint("WrongCall")
 public class GameLoop extends Thread{
 	private GameView view;
-	private final static int 	MAX_FPS = 60;
+	private final static int 	MAX_FPS = 40;
 	private final static int	MAX_FRAME_SKIPS = 5;
 	private final static int	FRAME_PERIOD = 1000 / MAX_FPS;
 
