@@ -8,7 +8,7 @@ public class Player {
 	static int x;
 	static int y;
 	static int gravity = (int) 1.2;
-	static int vspeed = 2;
+	static int vspeed = 1;
 	static int playerheight;
 	static int playerwidth;
 	static int jumppower = -10;

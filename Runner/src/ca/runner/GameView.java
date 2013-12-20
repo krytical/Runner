@@ -47,7 +47,7 @@ public class GameView extends SurfaceView {
 
 	private boolean PlayerGotShield = false;
 
-	private int PlayerShieldTimer = 120;
+	private int PlayerShieldTimer = 60;
 
 	private static SharedPreferences prefs;
 
