@@ -1,7 +1,9 @@
 package ca.runner;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 
+@SuppressLint("WrongCall")
 public class GameLoop extends Thread{
 	private GameView view;
 	private final static int 	MAX_FPS = 60;

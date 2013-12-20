@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 
+@SuppressLint("WrongCall")
 public class GameView extends SurfaceView {
 	GameLoop GameLoop;
 	SurfaceHolder holder;
@@ -304,6 +306,7 @@ public class GameView extends SurfaceView {
 		player.remove(0);
 	}
 
+	@SuppressLint("WrongCall")
 	@Override
 	protected void onDraw(Canvas canvas) {
 		update();
