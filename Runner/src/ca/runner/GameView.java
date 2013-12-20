@@ -21,7 +21,7 @@ import android.view.SurfaceView;
 
 @SuppressLint("WrongCall")
 public class GameView extends SurfaceView {
-	GameLoop GameLoop;
+	GameLoop gameLoop;
 	SurfaceHolder holder;
 
 	public static int globalxSpeed = 8;
@@ -75,7 +75,7 @@ public class GameView extends SurfaceView {
 		HighScore = prefs.getInt(saveScore , 0);
 		Achievement10000 = prefs.getInt(saveAchievement10000, 0);
 
-		GameLoop = new GameLoop(this);
+		gameLoop = new GameLoop(this);
 
 		holder = getHolder();
 		holder.addCallback(new Callback() {
@@ -86,13 +86,13 @@ public class GameView extends SurfaceView {
 				Coinscollected = 0;
 				prefs.edit().putInt(saveScore,HighScore).commit();
 				prefs.edit().putInt(saveAchievement10000,Achievement10000).commit();
-				GameLoop.runner = false;		
+				gameLoop.runner = false;		
 			}
 
 			public void surfaceCreated(SurfaceHolder arg0) {
 				// TODO Auto-generated method stub
-				GameLoop.setRunner();
-				GameLoop.start();
+				gameLoop.setRunner();
+				gameLoop.start();
 			}
 
 			public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
@@ -142,8 +142,8 @@ public class GameView extends SurfaceView {
 
 
 	public void update(){
-		if(Menu=="Running"){
-			Score += 5;
+		if(Menu=="Runner"){
+			Score += 3;
 			lastScore = Score;
 			updatetimers();
 			deleteground();
