@@ -4,6 +4,20 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+//Gravity - how fast the player goes down (strength of downward fall)
+//x - x position
+//y - y position
+//vs
+//jumppower - the more negative, the bigger the jump
+//Everything under mColumnWidth
+//1. Animation state (jumping graphic, running graphic
+//2. Player position
+//
+//Player updates position, height, width...
+//Update, updates the animation.
+//Animationstate - depending on which "box" on the player image, it will load that one.
+//Basically this class gets player position, update everything about the player, what happens when you touch screen.
+
 public class Player {
 	static int x;
 	static int y;

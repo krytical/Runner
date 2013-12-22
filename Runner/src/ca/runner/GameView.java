@@ -1,6 +1,27 @@
 package ca.runner;
 
 import java.util.ArrayList;
+
+//Game view basically loads all your image files to actually
+//draw onto the screen. It loads the counter for shield, saves
+//score and change the achievement completion.
+//surfaceDestroyed
+//Method basically resets everything, and stop running the game.
+//surfaceCreated
+//Method starts the game and starts all the timers (score, shield etc.)
+//onTouchEvent
+//Allows you to restart the game by clicking the restart button etc.
+//The timers are updated below that method. It counts the score by adding 5 and etc.
+//The methods below that are more complicated.
+//It counts all the shield timers and when they appear. Basically generates the next shield.
+//Same with the spikes and coins.
+//Adding ground is by getting the screen width and adding the ground image on to the screen.
+//
+//Mainmenu removes everything, all the coins, spikes, shields and the player.
+//Runner does the opposite, draws the player, score text, ground and etc.
+//
+//Mainmenu is the screen without the game
+//Runner is the game screen where the game is actually running.
 import java.util.List;
 import java.util.Random;
 
@@ -18,6 +39,42 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
+
+//Sets the speed of the game (globalxSpeed) how fast things move towards you.
+//Contains all the images
+//Initialize the score and achievement etc.
+//Gives the shield timer, zero's the timer for coins/spikes/shields appearing
+//Saves last score.
+//
+//surfaceDestroyed
+//1. Clears everything, scores, etc.
+//2. Sets the game to stop running.
+//
+//surfaceCreated
+//1. Set the game running.
+//
+//Adding the images
+//_____.add sets the images and etc.
+//
+//onTouchEvent - what happenes when touched
+//First if is at mainmenu
+//If you click the button on Manimenu, it will start the game.
+//
+//update
+//When game is running, update updates the score and achievement status.
+//Saves highscore if score > last high score.
+//
+//updatetimers
+//update the timers, adding spikes, sheilds and coins.
+//Basically sets when they appear.
+//
+//endGame
+//Sets the world state to Mainmenu
+//Resets all timers, and removes everything. Adds the buttons
+//
+//onDraw
+//Draws Mainmenu (buttons) if at state Mainmenu
+//Draws Runner (game) if at state runner
 
 public class GameView extends SurfaceView {
 	GameLoop gameLoop;
