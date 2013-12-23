@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
     android:background="@drawable/background" >
  
     <ImageView
@@ -18,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:textColor="#000000"
         android:text="R U N N E R"
         android:textAppearance="?android:attr/textAppearanceLarge" />
  

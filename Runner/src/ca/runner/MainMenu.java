@@ -1,6 +1,7 @@
 package ca.runner;
 
-import ca.runner.MainMenu;
+import ca.runner.R;
+import ca.runner.RunnerGameActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
