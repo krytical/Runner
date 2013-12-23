@@ -31,7 +31,9 @@ public final class R {
         public static final int spikes=0x7f020007;
     }
     public static final class id {
-        public static final int imgIcon=0x7f080000;
+        public static final int Splash_Logo=0x7f080000;
+        public static final int button1=0x7f080002;
+        public static final int textView1=0x7f080001;
     }
     public static final class layout {
         public static final int activity_splash=0x7f030000;

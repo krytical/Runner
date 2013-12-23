@@ -5,18 +5,20 @@
     android:background="@drawable/background" >
  
     <ImageView
-        android:id="@+id/imgIcon"
+        android:id="@+id/Splash_Logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:src="@drawable/icon" />
- 
+		android:scaleType="fitStart"
+		android:src="@drawable/background" />
+
     <TextView
-        android:layout_width="fill_parent"
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12dp"
-        android:textColor="#454545"
-        android:gravity="center_horizontal"
-        android:text="Runner Splash Filler" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="R U N N E R"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
  
 </RelativeLayout>
