@@ -65,7 +65,7 @@ import android.view.SurfaceView;
 //Saves highscore if score > last high score.
 //
 //updatetimers
-//update the timers, adding spikes, sheilds and coins.
+//update the timers, adding spikes, shields and coins.
 //Basically sets when they appear.
 //
 //endGame
@@ -76,7 +76,9 @@ import android.view.SurfaceView;
 //Draws Mainmenu (buttons) if at state Mainmenu
 //Draws Runner (game) if at state runner
 
+@SuppressLint("DrawAllocation")
 public class GameView extends SurfaceView {
+
 	GameLoop gameLoop;
 	SurfaceHolder holder;
 
@@ -92,41 +94,80 @@ public class GameView extends SurfaceView {
 	int xx = 0;
 
 	private List<Coin> coins = new ArrayList<Coin>();
-	private List<Player> player = new ArrayList<Player>();
+	private Player player;
 	private List<Ground> ground = new ArrayList<Ground>();
 	private List<Spikes> spikes = new ArrayList<Spikes>();
-	private List<Shield> shield = new ArrayList<Shield>();
+	private List<Shield> shields = new ArrayList<Shield>();
 	private List<Buttons> buttons = new ArrayList<Buttons>();
 
-	public static int Coinscollected = 0;
+	private static Rect playerHitBox;
+	private static Rect spike;
+	private static Rect coin;
+	private static Rect shield;
+
+	// Counters
 	public static int Score = 0;
+	public static int CoinsCollected = 0;
+	private static int PlayerShieldCountdown = 0;
 	public static int HighScore = 0;
+
+	// Timers
+
+	private static int shieldTimer = 0;
+
+	private static int coinTimer = 0;
+
+	private static int spikeTimer = 0;
+
+	private static int timerRandomShield = 0;
+	private static int timerRandomSpikes = 1;
+
+
+	// Counter String Values
+	public static String scoreCountText = "Score: ";
+	public static String coinCountText = "Coins: ";
+	public static String shieldCountText = "Shield: ";
+	public static String highScoreText = "High Score: ";
+
+	// Counter String Position Values
+	public static int scoreTextXPos = 0;
+	public static int scoreTextYPos = 32;
+
+	public static int coinTextXPos = 0;
+	public static int coinTextYPos = 64;
+
+	public static int shieldTextXPos = 0;
+	public static int shieldTextYPos = 96;
+
+	public static int highScoreTextXPos = 0;
+	public static int highScoreTextYPos = 32;
+
+
+
 	public static int Achievement10000 = 0; // False
 
-	private boolean PlayerGotShield = false;
+	private boolean PlayerShielded = false;
 
-	private int PlayerShieldTimer = 60;
 
 	private static SharedPreferences prefs;
-
-	private int timerCoins = 0;
-	private int timerSpikes = 0;
-	private int timerShield = 0;
-
-	private int timerRandomShield = 0;
-	private int timerRandomSpikes = 1;
 
 	private int lastScore = 0;
 
 	private String saveAchievement10000 = "Achievement10000";
 	private String saveScore = "Highscore";
-	private String Menu = "Runner";
+
+	// gameState constants; either running the game or at the main menu
+
+	private String gameRunning = "GAME_RUNNING";
+	private String gameOver = "GAME_OVER";
+
+	private String gameState = gameRunning; //start running the game
 
 	public GameView(Context context) {
 		super(context);
 		prefs = context.getSharedPreferences("ca.runner",context.MODE_PRIVATE);
 
-		String spackage ="ca.runner";
+		String packageName ="ca.runner";
 
 		HighScore = prefs.getInt(saveScore , 0);
 		Achievement10000 = prefs.getInt(saveAchievement10000, 0);
@@ -138,8 +179,8 @@ public class GameView extends SurfaceView {
 
 			public void surfaceDestroyed(SurfaceHolder arg0) {
 				// TODO Auto-generated method stub
-				Score =0;
-				Coinscollected = 0;
+				Score = 0;
+				CoinsCollected = 0;
 				prefs.edit().putInt(saveScore,HighScore).commit();
 				prefs.edit().putInt(saveAchievement10000,Achievement10000).commit();
 				gameLoop.runner = false;		
@@ -155,7 +196,7 @@ public class GameView extends SurfaceView {
 				// TODO Auto-generated method stub			
 			}
 		});
-		
+
 		playerbmp = BitmapFactory.decodeResource(getResources(), R.drawable.player);
 		coinbmp = BitmapFactory.decodeResource(getResources(), R.drawable.coin);
 		groundbmp = BitmapFactory.decodeResource(getResources(), R.drawable.ground);
@@ -163,10 +204,10 @@ public class GameView extends SurfaceView {
 		shieldbmp = BitmapFactory.decodeResource(getResources(), R.drawable.shield);
 		buttonsbmp = BitmapFactory.decodeResource(getResources(), R.drawable.buttons);
 		backgroundbmp = BitmapFactory.decodeResource(getResources(), R.drawable.background);
-		shield.add(new Shield(this,shieldbmp,600,32));
+		shields.add(new Shield(this,shieldbmp,600,32));
 		spikes.add(new Spikes(this,spikesbmp,400,0));
 		spikes.add(new Spikes(this,spikesbmp,800,0));
-		player.add(new Player(this,playerbmp,50,50));
+		player = (new Player(this,playerbmp,50,50));
 		coins.add(new Coin(this,coinbmp,120,32));
 		coins.add(new Coin(this,coinbmp,50,0));
 		// TODO Auto-generated constructor stub
@@ -175,17 +216,15 @@ public class GameView extends SurfaceView {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent e){
-		for(Player player1: player)
-		{
-			player1.ontouch();
-		}
-		if (Menu =="Mainmenu")
+		player.ontouch();
+
+		if (gameState.equals(gameOver))
 		{
 			for(int i = 0; i < buttons.size(); i++){
 				if (buttons.get(i).getState() == 1){   // Restart
 					if ((buttons.get(i).getX()<e.getX() && buttons.get(i).getX()+84>e.getX())){
 						if (buttons.get(i).getY()<e.getY() && buttons.get(i).getY()+32>e.getY()){
-							Menu = "Runner";
+							gameState = "Runner";
 							startGame();}	
 					}
 				}
@@ -198,8 +237,8 @@ public class GameView extends SurfaceView {
 
 
 	public void update(){
-		if(Menu=="Runner"){
-			Score += 3;
+		if(gameState.equals(gameRunning)){
+			Score += 1;
 			lastScore = Score;
 			updatetimers();
 			deleteground();
@@ -217,75 +256,75 @@ public class GameView extends SurfaceView {
 
 	public void updatetimers(){
 
-		timerCoins ++;
-		timerSpikes ++;
-		timerShield ++;
-		if (Menu =="Runner"){
-			if (PlayerGotShield){
-				PlayerShieldTimer --;
-				if (PlayerShieldTimer <= 0)
+		coinTimer ++;
+		spikeTimer ++;
+		shieldTimer ++;
+		if (gameState.equals(gameRunning)){
+			if (PlayerShielded){
+				PlayerShieldCountdown --;
+				if (PlayerShieldCountdown <= 0)
 				{
-					PlayerGotShield = false;
+					PlayerShielded = false;
 				}
 			}
 			switch(timerRandomShield){
 
 			case 0:
-				if(timerShield >= 150){
-					shield.add(new Shield(this,shieldbmp,this.getWidth()+32,0));
+				if(shieldTimer >= 150){
+					shields.add(new Shield(this,shieldbmp,this.getWidth()+32,0));
 					Random randomShield = new Random();
 					timerRandomShield = randomShield.nextInt(3);
-					timerShield = 0;
+					shieldTimer = 0;
 
 				}break;
 			case 1:
-				if(timerShield >= 250){
-					shield.add(new Shield(this,shieldbmp,this.getWidth()+32,0));
+				if(shieldTimer >= 250){
+					shields.add(new Shield(this,shieldbmp,this.getWidth()+32,0));
 					Random randomShield = new Random();
 					timerRandomShield = randomShield.nextInt(3);
-					timerShield = 0;
+					shieldTimer = 0;
 
 				}break;
 			case 2:
-				if(timerShield >= 350){
-					shield.add(new Shield(this,shieldbmp,this.getWidth()+32,0));
+				if(shieldTimer >= 350){
+					shields.add(new Shield(this,shieldbmp,this.getWidth()+32,0));
 					Random randomShield = new Random();
 					timerRandomShield = randomShield.nextInt(3);
-					timerShield = 0;
+					shieldTimer = 0;
 
 				}break;
 			}
 			switch(timerRandomSpikes){
 
 			case 0:
-				if(timerSpikes >= 125)
+				if(spikeTimer >= 125)
 				{
 					spikes.add(new Spikes(this,spikesbmp,this.getWidth()+24,0));
 					Random randomSpikes = new Random();
 					timerRandomSpikes = randomSpikes.nextInt(3);
-					timerSpikes = 0;
+					spikeTimer = 0;
 				}break;
 			case 1:
-				if(timerSpikes >= 175)
+				if(spikeTimer >= 175)
 				{
 					spikes.add(new Spikes(this,spikesbmp,this.getWidth()+24,0));
 					Random randomSpikes = new Random();
 					timerRandomSpikes = randomSpikes.nextInt(3);
-					timerSpikes = 0;
+					spikeTimer = 0;
 				}break;
 
 			case 2:
-				if(timerSpikes >= 100)
+				if(spikeTimer >= 100)
 				{
 					spikes.add(new Spikes(this,spikesbmp,this.getWidth()+24,0));
 					Random randomSpikes = new Random();
 					timerRandomSpikes = randomSpikes.nextInt(3);
-					timerSpikes = 0;
+					spikeTimer = 0;
 				}
 				break;
 			}
 
-			if (timerCoins >= 100){
+			if (coinTimer >= 100){
 				Random randomCoin = new Random();
 				int random;
 				random = randomCoin.nextInt(3);
@@ -293,7 +332,7 @@ public class GameView extends SurfaceView {
 
 				case 1:
 					int currentcoin = 1;
-					int xx = 1;
+					xx = 1;
 					while(currentcoin <= 5){
 
 						coins.add(new Coin(this,coinbmp,this.getWidth()+(32*xx),32));
@@ -311,7 +350,7 @@ public class GameView extends SurfaceView {
 					coins.add(new Coin(this,coinbmp,this.getWidth()+128,48));
 					coins.add(new Coin(this,coinbmp,this.getWidth()+160,32));
 				}
-				timerCoins = 0;
+				coinTimer = 0;
 			}
 		}
 	}
@@ -334,32 +373,13 @@ public class GameView extends SurfaceView {
 		}
 	}
 	public void startGame(){
+
+		gameState = gameRunning;
+
 		for(int i = 0; i < buttons.size(); i++){
 			buttons.remove(i);
 		}
-		player.add(new Player(this,playerbmp,50,50));
-	}
-
-	public void endGame(){
-		Menu  = "Mainmenu";
-		timerCoins =0;
-		timerSpikes =0;
-		timerShield=0;
-		buttons.add(new Buttons(this,buttonsbmp,this.getWidth()/2-64,this.getHeight()/2,3));
-		buttons.add(new Buttons(this,buttonsbmp,this.getWidth()/2-64,this.getHeight()/2+48,1));
-		for(int i = 0; i < coins.size(); i++)
-		{
-			coins.remove(i);
-		}
-		for(int i = 0; i < spikes.size(); i++)
-		{
-			spikes.remove(i);
-		}
-		for(int i = 0; i < shield.size(); i++)
-		{
-			shield.remove(i);
-		}
-		player.remove(0);
+		player = (new Player(this,playerbmp,50,50));
 	}
 
 	@SuppressLint("WrongCall")
@@ -369,7 +389,7 @@ public class GameView extends SurfaceView {
 		canvas.drawColor(Color.BLACK);
 		canvas.drawBitmap(backgroundbmp, 0, 0, null);		
 		// If the menu is Main menu, draw the button
-		if (Menu=="Mainmenu")
+		if (gameState.equals(gameOver))
 		{
 			for(Buttons buttons1: buttons)
 			{
@@ -378,13 +398,14 @@ public class GameView extends SurfaceView {
 
 		}
 		// If the game is running, draw it
-		if (Menu == "Runner"){
+		if (gameState.equals(gameRunning)){
 			addground();
 			Paint textpaint = new Paint();
 			textpaint.setTextSize(32);
-			canvas.drawText("Score: "+String.valueOf(Score), 0, 32, textpaint);
-			canvas.drawText("High Score: "+String.valueOf(HighScore), 0, 64, textpaint);
-			canvas.drawText("Coins: "+String.valueOf(Coinscollected), 0, 96, textpaint);
+			canvas.drawText(scoreCountText+String.valueOf(Score), 0, 32, textpaint);
+			canvas.drawText(coinCountText+String.valueOf(CoinsCollected), coinTextXPos, coinTextYPos, textpaint);
+			canvas.drawText(shieldCountText+String.valueOf(PlayerShieldCountdown), shieldTextXPos, shieldTextYPos, textpaint);
+			canvas.drawText(highScoreText+String.valueOf(HighScore), canvas.getWidth()/2, highScoreTextYPos, textpaint);
 			if (Achievement10000 == 0)
 			{
 				canvas.drawText("10000 Points - Not Complete", 0, 128, textpaint);
@@ -397,60 +418,93 @@ public class GameView extends SurfaceView {
 			for(Ground ground1: ground){
 				ground1.onDraw(canvas);
 			}
-			for(Player player1: player)
-			{
-				player1.onDraw(canvas);
-			}
-			for(int i = 0; i < spikes.size(); i++){
-				spikes.get(i).onDraw(canvas);
-				Rect playerr = player.get(0).GetBounds();
-				Rect spikesr = spikes.get(i).GetBounds();
+			player.onDraw(canvas);
+		}
+		for(int i = 0; i < spikes.size(); i++){
+			spikes.get(i).onDraw(canvas);
+			playerHitBox = player.GetBounds();
+			spike = spikes.get(i).GetBounds();
 
-				if (spikes.get(i).checkCollision(playerr, spikesr)){
-					if(!PlayerGotShield){
-
-						Score = 0;
-						Coinscollected=0;
-						endGame();}
-					else{
-						spikes.remove(i);
-						PlayerGotShield = false;
-					}
-					break;
+			if (spikes.get(i).checkCollision(playerHitBox, spike)){
+				if(!PlayerShielded){
+					endGame();}
+				else{
+					spikes.remove(i);
+					PlayerShielded = false;
+					PlayerShieldCountdown = 0;						
 				}
-			}
-			for(int i = 0; i < coins.size(); i++){
-				coins.get(i).onDraw(canvas);
-				Rect playerr = player.get(0).GetBounds();
-				Rect coinr = coins.get(i).GetBounds();
-				if (coins.get(i).returnX() < 0-32){
-					coins.remove(i);
-				}
-				else if (coins.get(i).checkCollision(playerr, coinr)){
-					coins.remove(i);
-					Score += 500;
-					Coinscollected+=1;
-				}
-			}
-			for(int i = 0; i < shield.size(); i++){
-				shield.get(i).onDraw(canvas);
-				Rect playerr = player.get(0).GetBounds();
-				Rect shieldr = shield.get(i).GetBounds();
-
-				if (shield.get(i).returnX() < 0-32){
-					shield.remove(i);
-				}
-				else if(shield.get(i).checkCollision(playerr, shieldr)){
-					shield.remove(i);
-					PlayerGotShield = true;
-					PlayerShieldTimer = 60;
-				}
+				break;
 			}
 		}
-		if (Menu=="Mainmenu")
-		{Paint textpaint = new Paint();
-		textpaint.setTextSize(32);
-		canvas.drawText("Score: "+String.valueOf(lastScore), canvas.getWidth()/2, canvas.getHeight()/2, textpaint);
+		for(int i = 0; i < coins.size(); i++){
+			coins.get(i).onDraw(canvas);
+			playerHitBox = player.GetBounds();
+			coin = coins.get(i).GetBounds();
+			if (coins.get(i).returnX() < 0-32){
+				coins.remove(i);
+			}
+			else if (coins.get(i).checkCollision(playerHitBox, coin)){
+				coins.remove(i);
+				Score += 100;
+				CoinsCollected += 1;
+			}
 		}
+		for(int i = 0; i < shields.size(); i++){
+			shields.get(i).onDraw(canvas);
+			playerHitBox = player.GetBounds();
+			shield = shields.get(i).GetBounds();
+
+			if (shields.get(i).returnX() < 0-32){
+				shields.remove(i);
+			}
+			else if(shields.get(i).checkCollision(playerHitBox, shield)){
+				shields.remove(i);
+				PlayerShielded = true;
+				PlayerShieldCountdown = 100;
+			}
+		}
+
+		if (gameState.equals(gameOver))
+		{
+			Paint textpaint = new Paint();
+			textpaint.setTextSize(32);
+			canvas.drawText("Score: "+String.valueOf(lastScore), canvas.getWidth()/2, canvas.getHeight()/2, textpaint);
+		}
+	}
+
+	public void resetTimers(){
+		coinTimer =0;
+		spikeTimer =0;
+		shieldTimer=0;
+	}
+
+	public void resetCounters(){
+		Score = 0;
+		CoinsCollected = 0;
+		PlayerShieldCountdown = 0;
+	}
+
+	public void removeObjects(){
+		for(int i = 0; i < coins.size(); i++)
+		{
+			coins.remove(i);
+		}
+		for(int i = 0; i < spikes.size(); i++)
+		{
+			spikes.remove(i);
+		}
+		for(int i = 0; i < shields.size(); i++)
+		{
+			shields.remove(i);
+		}
+	}
+	public void endGame(){
+
+		removeObjects();
+		resetCounters();
+		resetTimers();
+		gameState  = gameOver;
+		buttons.add(new Buttons(this,buttonsbmp,this.getWidth()/2-64,this.getHeight()/2,3));
+		buttons.add(new Buttons(this,buttonsbmp,this.getWidth()/2-64,this.getHeight()/2+48,1));
 	}
 }
