@@ -1,5 +1,6 @@
 package ca.runner;
 
+import ca.runner.GameView;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.os.Bundle;
