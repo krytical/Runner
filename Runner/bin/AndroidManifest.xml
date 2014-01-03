@@ -14,21 +14,14 @@
         android:label="@string/app_name"
 		android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
         <activity
-            android:screenOrientation="landscape"
-            android:name="ca.runner.SplashScreen"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar" >
+            android:screenOrientation="landscape" 
+            android:configChanges="orientation|keyboardHidden"
+            android:name=".RunnerGameActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        
-        <activity
-            android:screenOrientation="landscape" 
-            android:configChanges="orientation|keyboardHidden"
-            android:name="ca.runner.MainMenu"
-            android:label="@string/app_name" >
         </activity>
     </application>
 

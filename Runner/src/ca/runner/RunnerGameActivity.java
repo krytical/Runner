@@ -15,6 +15,7 @@ public class RunnerGameActivity extends Activity {
 		gameView = new GameView(this);
 		setContentView(gameView);
 		bGMusic = MediaPlayer.create(this, R.raw.gamemusic);
+		bGMusic.setLooping(true);
 		bGMusic.start();
 	}
 
