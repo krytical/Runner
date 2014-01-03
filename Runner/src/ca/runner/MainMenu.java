@@ -16,8 +16,6 @@ public class MainMenu extends Activity implements OnClickListener {
 	public void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		bGMusic = MediaPlayer.create(this, R.raw.gamemusic);
-		bGMusic.start();
 		
 		//click button
 		View aboutButton = findViewById(R.id.button1);
