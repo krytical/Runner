@@ -110,7 +110,9 @@ public class GameView extends SurfaceView {
 	public static int CoinsCollected = 0;
 	private static int PlayerShieldCountdown = 0;
 	public static int HighScore = 0;
-
+	int oldHighScore;
+	public static int finalCoins = 0;
+	private static int lastScore = 0;
 	// Timers
 
 	private static int shieldTimer = 0;
@@ -151,10 +153,10 @@ public class GameView extends SurfaceView {
 
 	private static SharedPreferences prefs;
 
-	private int lastScore = 0;
+	
 
 	private String saveAchievement10000 = "Achievement10000";
-	private String saveScore = "Highscore";
+	private String saveScore = "High Score";
 
 	// gameState constants; either running the game or at the main menu
 
@@ -168,7 +170,7 @@ public class GameView extends SurfaceView {
 		prefs = context.getSharedPreferences("ca.runner",context.MODE_PRIVATE);
 
 		String packageName ="ca.runner";
-
+		oldHighScore = HighScore;
 		HighScore = prefs.getInt(saveScore , 0);
 		Achievement10000 = prefs.getInt(saveAchievement10000, 0);
 
@@ -225,7 +227,8 @@ public class GameView extends SurfaceView {
 					if ((buttons.get(i).getX()<e.getX() && buttons.get(i).getX()+84>e.getX())){
 						if (buttons.get(i).getY()<e.getY() && buttons.get(i).getY()+32>e.getY()){
 							gameState = "Runner";
-							startGame();}	
+							startGame();
+						}	
 					}
 				}
 
@@ -240,6 +243,7 @@ public class GameView extends SurfaceView {
 		if(gameState.equals(gameRunning)){
 			Score += 1;
 			lastScore = Score;
+			finalCoins = CoinsCollected;
 			updatetimers();
 			deleteground();
 
@@ -406,14 +410,6 @@ public class GameView extends SurfaceView {
 			canvas.drawText(coinCountText+String.valueOf(CoinsCollected), coinTextXPos, coinTextYPos, textpaint);
 			canvas.drawText(shieldCountText+String.valueOf(PlayerShieldCountdown), shieldTextXPos, shieldTextYPos, textpaint);
 			canvas.drawText(highScoreText+String.valueOf(HighScore), canvas.getWidth()/2, highScoreTextYPos, textpaint);
-			if (Achievement10000 == 0)
-			{
-				canvas.drawText("10000 Points - Not Complete", 0, 128, textpaint);
-			}
-			else if (Achievement10000 == 1)
-			{
-				canvas.drawText("10000 Points - Complete", 0, 128, textpaint);
-			}
 
 			for(Ground ground1: ground){
 				ground1.onDraw(canvas);
@@ -468,7 +464,13 @@ public class GameView extends SurfaceView {
 		{
 			Paint textpaint = new Paint();
 			textpaint.setTextSize(32);
-			canvas.drawText("Score: "+String.valueOf(lastScore), canvas.getWidth()/2, canvas.getHeight()/2, textpaint);
+			canvas.drawText("Score: "+String.valueOf(lastScore), canvas.getWidth()/3, canvas.getHeight()/4, textpaint);
+
+			if(oldHighScore < Score){
+				canvas.drawText("New High Score!!! OMG :D", canvas.getWidth()/3, (canvas.getHeight()/4)-32,textpaint);
+			}
+			canvas.drawText("Coins Collected: "+String.valueOf(finalCoins), canvas.getWidth()/3, (canvas.getHeight()/4)+32, textpaint);
+			
 		}
 	}
 
@@ -504,7 +506,6 @@ public class GameView extends SurfaceView {
 		resetCounters();
 		resetTimers();
 		gameState  = gameOver;
-		buttons.add(new Buttons(this,buttonsbmp,this.getWidth()/2-64,this.getHeight()/2,3));
 		buttons.add(new Buttons(this,buttonsbmp,this.getWidth()/2-64,this.getHeight()/2+48,1));
 	}
 }
