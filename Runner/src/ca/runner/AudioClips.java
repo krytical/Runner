@@ -18,7 +18,7 @@ public class AudioClips extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.main_menu);
         soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         soundsMap = new HashMap<Integer, Integer>();
         soundsMap.put(SOUND1, soundPool.load(this, R.raw.supermariocoinnoise, 1));

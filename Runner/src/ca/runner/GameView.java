@@ -469,8 +469,8 @@ public class GameView extends SurfaceView {
 			canvas.drawText("Score: "+String.valueOf(lastScore), canvas.getWidth()/3, canvas.getHeight()/4, textpaint);
 
 			if(oldHighScore < Score){
-				canvas.drawText("New High Score!!! OMG", canvas.getWidth()/3, (canvas.getHeight()/4)-32,textpaint);
-				canvas.drawText("Here's a goat to celebrate d(^.^d)", canvas.getWidth()/3, (canvas.getHeight()/4)-64,textpaint);
+				canvas.drawText("New High Score!!! OMG", canvas.getWidth()/3, (canvas.getHeight()/4)-64,textpaint);
+				canvas.drawText("Here's a goat to celebrate d(^.^d)", canvas.getWidth()/3, (canvas.getHeight()/4)-32,textpaint);
 				music = MediaPlayer.create(getContext(), R.raw.sheephighscore);
 				music.start();
 			}

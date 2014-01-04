@@ -36,8 +36,8 @@ public final class R {
         public static final int textView1=0x7f080001;
     }
     public static final class layout {
-        public static final int activity_splash=0x7f030000;
-        public static final int main=0x7f030001;
+        public static final int main=0x7f030000;
+        public static final int main_menu=0x7f030001;
     }
     public static final class raw {
         public static final int gamemusic=0x7f040000;
