@@ -21,8 +21,8 @@ public class AudioClips extends Activity {
         setContentView(R.layout.main_menu);
         soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         soundsMap = new HashMap<Integer, Integer>();
-        soundsMap.put(SOUND1, soundPool.load(this, R.raw.supermariocoinnoise, 1));
-        soundsMap.put(SOUND2, soundPool.load(this, R.raw.sheephighscore, 1));
+        soundsMap.put(SOUND1, soundPool.load(this, R.raw.got_coin, 1));
+        soundsMap.put(SOUND2, soundPool.load(this, R.raw.new_highscore, 1));
     }
  
         public void playSound(int sound, float fSpeed) {

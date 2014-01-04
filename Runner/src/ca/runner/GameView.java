@@ -125,7 +125,6 @@ public class GameView extends SurfaceView {
 	private static int timerRandomShield = 0;
 	private static int timerRandomSpikes = 1;
 
-
 	// Counter String Values
 	public static String scoreCountText = "Score: ";
 	public static String coinCountText = "Coins: ";
@@ -166,14 +165,16 @@ public class GameView extends SurfaceView {
 
 	private String gameState = gameRunning; //start running the game
 
-	private MediaPlayer music;
+	// Sounds
+
+	private MediaPlayer newHighScoreSound, gotCoinSound;
 
 	public GameView(Context context) {
 		super(context);
 		prefs = context.getSharedPreferences("ca.runner",context.MODE_PRIVATE);
 
 		String packageName ="ca.runner";
-		oldHighScore = HighScore;
+		oldHighScore = prefs.getInt(saveScore , 0);
 		HighScore = prefs.getInt(saveScore , 0);
 		Achievement10000 = prefs.getInt(saveAchievement10000, 0);
 
@@ -445,6 +446,10 @@ public class GameView extends SurfaceView {
 				coins.remove(i);
 				Score += 100;
 				CoinsCollected += 1;
+				if(!gotCoinSound.isPlaying()){
+					gotCoinSound = MediaPlayer.create(getContext(), R.raw.got_coin);
+					gotCoinSound.start();
+				}
 			}
 		}
 		for(int i = 0; i < shields.size(); i++){
@@ -468,11 +473,11 @@ public class GameView extends SurfaceView {
 			textpaint.setTextSize(32);
 			canvas.drawText("Score: "+String.valueOf(lastScore), canvas.getWidth()/3, canvas.getHeight()/4, textpaint);
 
-			if(oldHighScore < Score){
+			if(oldHighScore < lastScore){
 				canvas.drawText("New High Score!!! OMG", canvas.getWidth()/3, (canvas.getHeight()/4)-64,textpaint);
 				canvas.drawText("Here's a goat to celebrate d(^.^d)", canvas.getWidth()/3, (canvas.getHeight()/4)-32,textpaint);
-				music = MediaPlayer.create(getContext(), R.raw.sheephighscore);
-				music.start();
+				newHighScoreSound = MediaPlayer.create(getContext(), R.raw.new_highscore);
+				newHighScoreSound.start();
 			}
 			canvas.drawText("Coins Collected: "+String.valueOf(finalCoins), canvas.getWidth()/3, (canvas.getHeight()/4)+32, textpaint);
 
