@@ -34,6 +34,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -153,7 +154,7 @@ public class GameView extends SurfaceView {
 
 	private static SharedPreferences prefs;
 
-	
+
 
 	private String saveAchievement10000 = "Achievement10000";
 	private String saveScore = "High Score";
@@ -164,6 +165,8 @@ public class GameView extends SurfaceView {
 	private String gameOver = "GAME_OVER";
 
 	private String gameState = gameRunning; //start running the game
+
+	private MediaPlayer music;
 
 	public GameView(Context context) {
 		super(context);
@@ -257,7 +260,6 @@ public class GameView extends SurfaceView {
 			}
 		}
 	}
-
 	public void updatetimers(){
 
 		coinTimer ++;
@@ -467,10 +469,13 @@ public class GameView extends SurfaceView {
 			canvas.drawText("Score: "+String.valueOf(lastScore), canvas.getWidth()/3, canvas.getHeight()/4, textpaint);
 
 			if(oldHighScore < Score){
-				canvas.drawText("New High Score!!! OMG :D", canvas.getWidth()/3, (canvas.getHeight()/4)-32,textpaint);
+				canvas.drawText("New High Score!!! OMG", canvas.getWidth()/3, (canvas.getHeight()/4)-32,textpaint);
+				canvas.drawText("Here's a goat to celebrate d(^.^d)", canvas.getWidth()/3, (canvas.getHeight()/4)-64,textpaint);
+				music = MediaPlayer.create(getContext(), R.raw.sheephighscore);
+				music.start();
 			}
 			canvas.drawText("Coins Collected: "+String.valueOf(finalCoins), canvas.getWidth()/3, (canvas.getHeight()/4)+32, textpaint);
-			
+
 		}
 	}
 
