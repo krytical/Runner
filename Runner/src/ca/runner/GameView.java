@@ -167,7 +167,7 @@ public class GameView extends SurfaceView {
 
 	// Sounds
 
-	private MediaPlayer newHighScoreSound, gotCoinSound;
+	private MediaPlayer newHighScoreSound, gotCoinSound = MediaPlayer.create(getContext(), R.raw.got_coin);
 
 	public GameView(Context context) {
 		super(context);
