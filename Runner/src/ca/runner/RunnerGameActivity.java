@@ -1,5 +1,7 @@
 package ca.runner;
 
+import java.util.ArrayList;
+
 import ca.runner.GameView;
 import android.app.Activity;
 import android.media.MediaPlayer;
@@ -19,6 +21,10 @@ public class RunnerGameActivity extends Activity {
 	public void onPause(){
 		super.onPause();
 		gameView.gameLoop.runner = false;
+		ArrayList<MediaPlayer> soundsToRelease = gameView.getSounds();
+		for(MediaPlayer sound : soundsToRelease){
+			sound.release();
+		}
 		finish();
 	}
 }

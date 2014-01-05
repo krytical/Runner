@@ -165,9 +165,12 @@ public class GameView extends SurfaceView {
 
 	private String gameState = gameRunning; //start running the game
 
-	// Sounds
+	// Game Sounds
 
-	private MediaPlayer newHighScoreSound, gotCoinSound = MediaPlayer.create(getContext(), R.raw.got_coin);
+	MediaPlayer newHighScoreSound = MediaPlayer.create(getContext(), R.raw.new_highscore);
+	MediaPlayer gotCoinSound;
+	MediaPlayer playerDiedSound = MediaPlayer.create(getContext(), R.raw.player_death);
+	MediaPlayer gotShieldSound = MediaPlayer.create(getContext(), R.raw.got_shield);
 
 	public GameView(Context context) {
 		super(context);
@@ -383,6 +386,7 @@ public class GameView extends SurfaceView {
 
 		gameState = gameRunning;
 
+
 		for(int i = 0; i < buttons.size(); i++){
 			buttons.remove(i);
 		}
@@ -395,18 +399,11 @@ public class GameView extends SurfaceView {
 		update();
 		canvas.drawColor(Color.BLACK);
 		canvas.drawBitmap(backgroundbmp, 0, 0, null);		
-		// If the menu is Main menu, draw the button
-		if (gameState.equals(gameOver))
-		{
-			for(Buttons buttons1: buttons)
-			{
-				buttons1.onDraw(canvas);
-			}
 
-		}
 		// If the game is running, draw it
+		addground();
 		if (gameState.equals(gameRunning)){
-			addground();
+
 			Paint textpaint = new Paint();
 			textpaint.setTextSize(32);
 			canvas.drawText(scoreCountText+String.valueOf(Score), 0, 32, textpaint);
@@ -416,16 +413,22 @@ public class GameView extends SurfaceView {
 
 			for(Ground ground1: ground){
 				ground1.onDraw(canvas);
-			}
+			}			
+
 			player.onDraw(canvas);
 		}
+
+
 		for(int i = 0; i < spikes.size(); i++){
 			spikes.get(i).onDraw(canvas);
 			playerHitBox = player.GetBounds();
 			spike = spikes.get(i).GetBounds();
 
 			if (spikes.get(i).checkCollision(playerHitBox, spike)){
-				if(!PlayerShielded){
+				if(!PlayerShielded && gameState.equals(gameRunning)){
+					if(!playerDiedSound.isPlaying()){
+						playerDiedSound.start();
+					}
 					endGame();}
 				else{
 					spikes.remove(i);
@@ -446,7 +449,7 @@ public class GameView extends SurfaceView {
 				coins.remove(i);
 				Score += 100;
 				CoinsCollected += 1;
-				if(!gotCoinSound.isPlaying()){
+				if(gameState.equals(gameRunning)){
 					gotCoinSound = MediaPlayer.create(getContext(), R.raw.got_coin);
 					gotCoinSound.start();
 				}
@@ -463,12 +466,21 @@ public class GameView extends SurfaceView {
 			else if(shields.get(i).checkCollision(playerHitBox, shield)){
 				shields.remove(i);
 				PlayerShielded = true;
+				if(!gotShieldSound.isPlaying() && gameState.equals(gameRunning)){
+					gotShieldSound.start();
+				}
 				PlayerShieldCountdown = 100;
 			}
 		}
 
-		if (gameState.equals(gameOver))
-		{
+		if (gameState.equals(gameOver))	{
+
+			for(Buttons buttons1: buttons){
+				buttons1.onDraw(canvas);
+			}
+			for(Ground ground1: ground){
+				ground1.onDraw(canvas);
+			}
 			Paint textpaint = new Paint();
 			textpaint.setTextSize(32);
 			canvas.drawText("Score: "+String.valueOf(lastScore), canvas.getWidth()/3, canvas.getHeight()/4, textpaint);
@@ -476,7 +488,6 @@ public class GameView extends SurfaceView {
 			if(oldHighScore < lastScore){
 				canvas.drawText("New High Score!!! OMG", canvas.getWidth()/3, (canvas.getHeight()/4)-64,textpaint);
 				canvas.drawText("Here's a goat to celebrate d(^.^d)", canvas.getWidth()/3, (canvas.getHeight()/4)-32,textpaint);
-				newHighScoreSound = MediaPlayer.create(getContext(), R.raw.new_highscore);
 				newHighScoreSound.start();
 			}
 			canvas.drawText("Coins Collected: "+String.valueOf(finalCoins), canvas.getWidth()/3, (canvas.getHeight()/4)+32, textpaint);
@@ -517,5 +528,14 @@ public class GameView extends SurfaceView {
 		resetTimers();
 		gameState  = gameOver;
 		buttons.add(new Buttons(this,buttonsbmp,this.getWidth()/2-64,this.getHeight()/2+48,1));
+	}
+
+	public ArrayList<MediaPlayer> getSounds(){
+		ArrayList<MediaPlayer> sounds = new ArrayList<MediaPlayer>();
+		sounds.add(gotCoinSound);
+		sounds.add(gotShieldSound);
+		sounds.add(newHighScoreSound);
+		sounds.add(playerDiedSound);
+		return sounds;
 	}
 }
