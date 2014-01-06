@@ -111,7 +111,7 @@ public class GameView extends SurfaceView {
 	public static int CoinsCollected = 0;
 	private static int PlayerShieldCountdown = 0;
 	public static int HighScore = 0;
-	int oldHighScore;
+	int oldHighScore = 0;
 	public static int finalCoins = 0;
 	private static int lastScore = 0;
 	// Timers
@@ -172,20 +172,18 @@ public class GameView extends SurfaceView {
 	MediaPlayer playerDiedSound = MediaPlayer.create(getContext(), R.raw.player_death);
 	MediaPlayer gotShieldSound = MediaPlayer.create(getContext(), R.raw.got_shield);
 
+	// ----------------------------------- GAME CODE STARTS HERE -----------------------------------------------	
+
+	// TODO
 	public GameView(Context context) {
 		super(context);
-		prefs = context.getSharedPreferences("ca.runner",context.MODE_PRIVATE);
-
-		String packageName ="ca.runner";
-		oldHighScore = prefs.getInt(saveScore , 0);
+		prefs = context.getSharedPreferences("ca.runner",Context.MODE_PRIVATE);
 		HighScore = prefs.getInt(saveScore , 0);
+		oldHighScore = HighScore;
 		Achievement10000 = prefs.getInt(saveAchievement10000, 0);
-
 		gameLoop = new GameLoop(this);
-
 		holder = getHolder();
 		holder.addCallback(new Callback() {
-
 			public void surfaceDestroyed(SurfaceHolder arg0) {
 				// TODO Auto-generated method stub
 				Score = 0;
@@ -194,13 +192,11 @@ public class GameView extends SurfaceView {
 				prefs.edit().putInt(saveAchievement10000,Achievement10000).commit();
 				gameLoop.runner = false;		
 			}
-
 			public void surfaceCreated(SurfaceHolder arg0) {
 				// TODO Auto-generated method stub
 				gameLoop.setRunner();
 				gameLoop.start();
 			}
-
 			public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
 				// TODO Auto-generated method stub			
 			}
@@ -219,16 +215,13 @@ public class GameView extends SurfaceView {
 		player = (new Player(this,playerbmp,50,50));
 		coins.add(new Coin(this,coinbmp,120,32));
 		coins.add(new Coin(this,coinbmp,50,0));
-		// TODO Auto-generated constructor stub
 	}
 
-
+	// TODO
 	@Override
 	public boolean onTouchEvent(MotionEvent e){
 		player.ontouch();
-
-		if (gameState.equals(gameOver))
-		{
+		if (gameState.equals(gameOver)){
 			for(int i = 0; i < buttons.size(); i++){
 				if (buttons.get(i).getState() == 1){   // Restart
 					if ((buttons.get(i).getX()<e.getX() && buttons.get(i).getX()+84>e.getX())){
@@ -238,14 +231,12 @@ public class GameView extends SurfaceView {
 						}	
 					}
 				}
-
 			}
 		}
 		return false;
-
 	}
 
-
+	// TODO
 	public void update(){
 		if(gameState.equals(gameRunning)){
 			Score += 1;
@@ -253,27 +244,24 @@ public class GameView extends SurfaceView {
 			finalCoins = CoinsCollected;
 			updatetimers();
 			deleteground();
-
-			if (Score >= 10000 && Achievement10000 == 0)
-			{
+			if (Score >= 10000 && Achievement10000 == 0){
 				Achievement10000 = 1;
 			}
-			if (Score > HighScore)
-			{
+			if (Score > HighScore){
 				HighScore = Score;
 			}
 		}
 	}
-	public void updatetimers(){
 
+	// TODO
+	public void updatetimers(){
 		coinTimer ++;
 		spikeTimer ++;
 		shieldTimer ++;
 		if (gameState.equals(gameRunning)){
 			if (PlayerShielded){
 				PlayerShieldCountdown --;
-				if (PlayerShieldCountdown <= 0)
-				{
+				if (PlayerShieldCountdown <= 0){
 					PlayerShielded = false;
 				}
 			}
@@ -285,8 +273,8 @@ public class GameView extends SurfaceView {
 					Random randomShield = new Random();
 					timerRandomShield = randomShield.nextInt(3);
 					shieldTimer = 0;
-
-				}break;
+				}
+				break;
 			case 1:
 				if(shieldTimer >= 250){
 					shields.add(new Shield(this,shieldbmp,this.getWidth()+32,0));
@@ -294,7 +282,8 @@ public class GameView extends SurfaceView {
 					timerRandomShield = randomShield.nextInt(3);
 					shieldTimer = 0;
 
-				}break;
+				}
+				break;
 			case 2:
 				if(shieldTimer >= 350){
 					shields.add(new Shield(this,shieldbmp,this.getWidth()+32,0));
@@ -302,30 +291,29 @@ public class GameView extends SurfaceView {
 					timerRandomShield = randomShield.nextInt(3);
 					shieldTimer = 0;
 
-				}break;
+				}
+				break;
 			}
 			switch(timerRandomSpikes){
 
 			case 0:
-				if(spikeTimer >= 125)
-				{
+				if(spikeTimer >= 125){
 					spikes.add(new Spikes(this,spikesbmp,this.getWidth()+24,0));
 					Random randomSpikes = new Random();
 					timerRandomSpikes = randomSpikes.nextInt(3);
 					spikeTimer = 0;
 				}break;
 			case 1:
-				if(spikeTimer >= 175)
-				{
+				if(spikeTimer >= 175){
 					spikes.add(new Spikes(this,spikesbmp,this.getWidth()+24,0));
 					Random randomSpikes = new Random();
 					timerRandomSpikes = randomSpikes.nextInt(3);
 					spikeTimer = 0;
-				}break;
+				}
+				break;
 
 			case 2:
-				if(spikeTimer >= 100)
-				{
+				if(spikeTimer >= 100){
 					spikes.add(new Spikes(this,spikesbmp,this.getWidth()+24,0));
 					Random randomSpikes = new Random();
 					timerRandomSpikes = randomSpikes.nextInt(3);
@@ -344,9 +332,7 @@ public class GameView extends SurfaceView {
 					int currentcoin = 1;
 					xx = 1;
 					while(currentcoin <= 5){
-
 						coins.add(new Coin(this,coinbmp,this.getWidth()+(32*xx),32));
-
 						currentcoin++;
 						xx++;
 					}
@@ -365,6 +351,7 @@ public class GameView extends SurfaceView {
 		}
 	}
 
+	// TODO
 	public void addground(){
 		while(xx < this.getWidth()+Ground.width){
 			ground.add(new Ground(this,groundbmp,xx,0));
@@ -372,9 +359,9 @@ public class GameView extends SurfaceView {
 		}
 	}
 
+	// TODO
 	public void deleteground(){
-		for (int i = ground.size()-1;i >= 0; i--)
-		{
+		for (int i = ground.size()-1;i >= 0; i--){
 			int groundx = ground.get(i).returnX();
 			if (groundx<=-Ground.width){
 				ground.remove(i);
@@ -382,17 +369,8 @@ public class GameView extends SurfaceView {
 			}
 		}
 	}
-	public void startGame(){
 
-		gameState = gameRunning;
-
-
-		for(int i = 0; i < buttons.size(); i++){
-			buttons.remove(i);
-		}
-		player = (new Player(this,playerbmp,50,50));
-	}
-
+	// TODO
 	@SuppressLint("WrongCall")
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -414,7 +392,6 @@ public class GameView extends SurfaceView {
 			for(Ground ground1: ground){
 				ground1.onDraw(canvas);
 			}			
-
 			player.onDraw(canvas);
 		}
 
@@ -459,7 +436,6 @@ public class GameView extends SurfaceView {
 			shields.get(i).onDraw(canvas);
 			playerHitBox = player.GetBounds();
 			shield = shields.get(i).GetBounds();
-
 			if (shields.get(i).returnX() < 0-32){
 				shields.remove(i);
 			}
@@ -474,7 +450,6 @@ public class GameView extends SurfaceView {
 		}
 
 		if (gameState.equals(gameOver))	{
-
 			for(Buttons buttons1: buttons){
 				buttons1.onDraw(canvas);
 			}
@@ -484,52 +459,64 @@ public class GameView extends SurfaceView {
 			Paint textpaint = new Paint();
 			textpaint.setTextSize(32);
 			canvas.drawText("Score: "+String.valueOf(lastScore), canvas.getWidth()/3, canvas.getHeight()/4, textpaint);
-
 			if(oldHighScore < lastScore){
 				canvas.drawText("New High Score!!! OMG", canvas.getWidth()/3, (canvas.getHeight()/4)-64,textpaint);
 				canvas.drawText("Here's a goat to celebrate d(^.^d)", canvas.getWidth()/3, (canvas.getHeight()/4)-32,textpaint);
-				newHighScoreSound.start();
 			}
 			canvas.drawText("Coins Collected: "+String.valueOf(finalCoins), canvas.getWidth()/3, (canvas.getHeight()/4)+32, textpaint);
-
 		}
 	}
 
+	// TODO
 	public void resetTimers(){
 		coinTimer =0;
 		spikeTimer =0;
 		shieldTimer=0;
 	}
 
+	// TODO
 	public void resetCounters(){
 		Score = 0;
 		CoinsCollected = 0;
 		PlayerShieldCountdown = 0;
 	}
 
+	// TODO
 	public void removeObjects(){
-		for(int i = 0; i < coins.size(); i++)
-		{
+		for(int i = 0; i < coins.size(); i++){
 			coins.remove(i);
 		}
-		for(int i = 0; i < spikes.size(); i++)
-		{
+		for(int i = 0; i < spikes.size(); i++){
 			spikes.remove(i);
 		}
-		for(int i = 0; i < shields.size(); i++)
-		{
+		for(int i = 0; i < shields.size(); i++){
 			shields.remove(i);
 		}
 	}
-	public void endGame(){
 
-		removeObjects();
-		resetCounters();
+	// TODO
+	public void startGame(){
 		resetTimers();
+		resetCounters();
+		gameState = gameRunning;
+		for(int i = 0; i < buttons.size(); i++){
+			buttons.remove(i);
+		}
+	}
+
+	// TODO
+	public void endGame(){
+		removeObjects();
+		if(oldHighScore < lastScore){
+			if (!newHighScoreSound.isPlaying()){
+				newHighScoreSound.start();
+			}
+		}
 		gameState  = gameOver;
 		buttons.add(new Buttons(this,buttonsbmp,this.getWidth()/2-64,this.getHeight()/2+48,1));
 	}
 
+	// TODO
 	public ArrayList<MediaPlayer> getSounds(){
 		ArrayList<MediaPlayer> sounds = new ArrayList<MediaPlayer>();
 		sounds.add(gotCoinSound);
