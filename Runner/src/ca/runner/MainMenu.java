@@ -1,8 +1,14 @@
 package ca.runner;
 
+import java.util.List;
+
 import ca.runner.R;
 import ca.runner.RunnerGameActivity;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -32,4 +38,21 @@ public class MainMenu extends Activity implements OnClickListener {
 		break;
 		}
 	}
+	
+	  @Override
+	  protected void onPause() {
+	    if (this.isFinishing()){
+	      bGMusic.stop();
+	    }
+	    Context context = getApplicationContext();
+	    ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+	    List<RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+	    if (!taskInfo.isEmpty()) {
+	      ComponentName topActivity = taskInfo.get(0).topActivity; 
+	      if (!topActivity.getPackageName().equals(context.getPackageName())) {
+	        bGMusic.stop();
+	      }
+	    }
+	    super.onPause();
+	  }
 }

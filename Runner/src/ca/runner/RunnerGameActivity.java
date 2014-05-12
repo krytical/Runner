@@ -17,14 +17,14 @@ public class RunnerGameActivity extends Activity {
 		setContentView(gameView);
 	}
 
-	@Override
-	public void onPause(){
-		super.onPause();
-		gameView.gameLoop.runner = false;
-		ArrayList<MediaPlayer> soundsToRelease = gameView.getSounds();
-		for(MediaPlayer sound : soundsToRelease){
-			sound.release();
-		}
-		finish();
-	}
+//	@Override
+//	public void onPause(){
+//		super.onPause();
+//		gameView.gameLoop.runner = false;
+//		ArrayList<MediaPlayer> soundsToRelease = gameView.getSounds();
+//		for(MediaPlayer sound : soundsToRelease){
+//			sound.release();
+//		}
+//		finish();
+//	}
 }
