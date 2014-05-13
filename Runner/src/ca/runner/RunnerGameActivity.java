@@ -27,6 +27,7 @@ public class RunnerGameActivity extends Activity {
 	public void onPause(){
 		super.onPause();
 		// gameView.gameLoop.runner = false;
+		bGMusic.stop();
 		ArrayList<MediaPlayer> soundsToRelease = gameView.getSounds();
 		for(MediaPlayer sound : soundsToRelease){
 			sound.release();

@@ -168,7 +168,7 @@ public class GameView extends SurfaceView {
 	// Game Sounds
 
 	MediaPlayer newHighScoreSound = MediaPlayer.create(getContext(), R.raw.new_highscore);
-	MediaPlayer gotCoinSound;
+	MediaPlayer gotCoinSound = MediaPlayer.create(getContext(), R.raw.got_coin);;
 	MediaPlayer playerDiedSound = MediaPlayer.create(getContext(), R.raw.player_death);
 	MediaPlayer gotShieldSound = MediaPlayer.create(getContext(), R.raw.got_shield);
 
@@ -427,7 +427,6 @@ public class GameView extends SurfaceView {
 				Score += 100;
 				CoinsCollected += 1;
 				if(gameState.equals(gameRunning)){
-					gotCoinSound = MediaPlayer.create(getContext(), R.raw.got_coin);
 					gotCoinSound.start();
 				}
 			}
