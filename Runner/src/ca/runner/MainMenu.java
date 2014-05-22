@@ -23,8 +23,10 @@ public class MainMenu extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_menu);
 		bGMusic = MediaPlayer.create(this, R.raw.game_music);
-		bGMusic.setLooping(true);
-		bGMusic.start();
+		if (!bGMusic.isPlaying()) {
+			bGMusic.start();
+			bGMusic.setLooping(true);
+		}
 		//click button
 		View aboutButton = findViewById(R.id.button1);
 		aboutButton.setOnClickListener(this);
@@ -54,5 +56,13 @@ public class MainMenu extends Activity implements OnClickListener {
 	      }
 	    }
 	    super.onPause();
+	  }
+	  
+	  @Override
+	  protected void onStop() {
+	      if (bGMusic != null && bGMusic.isPlaying()) {
+	          bGMusic.stop();
+	      }
+	      super.onPause();
 	  }
 }

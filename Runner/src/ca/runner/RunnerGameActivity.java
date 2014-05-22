@@ -1,9 +1,13 @@
 package ca.runner;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import ca.runner.GameView;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
+import android.content.ComponentName;
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -37,16 +41,29 @@ public class RunnerGameActivity extends Activity {
 		int m_nPaddingY = 0;
 		int m_nPaddingX = (m_nTotalW - m_nFrameW) / 2;
 	}
-
-//	@Override
-//	public void onPause(){
-//		super.onPause();
-//		// gameView.gameLoop.runner = false;
-//		bGMusic.stop();
-//		ArrayList<MediaPlayer> soundsToRelease = gameView.getSounds();
-//		for(MediaPlayer sound : soundsToRelease){
-//			sound.release();
-//		}
-//		finish();
-//	}
+	
+	  @Override
+	  protected void onPause() {
+	    if (this.isFinishing()){
+	      bGMusic.stop();
+	    }
+	    Context context = getApplicationContext();
+	    ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+	    List<RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+	    if (!taskInfo.isEmpty()) {
+	      ComponentName topActivity = taskInfo.get(0).topActivity; 
+	      if (!topActivity.getPackageName().equals(context.getPackageName())) {
+	        bGMusic.stop();
+	      }
+	    }
+	    super.onPause();
+	  }
+	  
+	  @Override
+	  protected void onStop() {
+	      if (bGMusic != null && bGMusic.isPlaying()) {
+	          bGMusic.stop();
+	      }
+	      super.onPause();
+	  }
 }
